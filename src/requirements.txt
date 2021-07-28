@@ -11,4 +11,5 @@ psycopg2-binary==2.8.6
 requests==2.26.0
 s3fs==2021.6.1
 scipy==1.5.2
+wheel==0.36.2
 z3-solver==4.8.9.0
