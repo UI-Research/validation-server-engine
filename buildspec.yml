@@ -10,7 +10,7 @@ phases:
       - pip install --upgrade awscli
       - pip install aws-sam-cli
       - docker --version
-      - service docker start
+      - sudo service docker start
 
   pre_build:
     commands:
