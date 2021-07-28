@@ -21,7 +21,7 @@ phases:
 
       # Use AWS SAM to package the application by using AWS CloudFormation
       #- aws cloudformation package --template template.yml --s3-bucket $S3_BUCKET --output-template template-export.yml
-      - sam build --use-container
+      - sam build --use-container --build-image amazon/aws-sam-cli-build-image-python3.8
       - sam package --s3-bucket $S3_BUCKET --output-template-file template-export.yml
 
       # Do not remove this statement. This command is required for AWS CodeStar projects.
