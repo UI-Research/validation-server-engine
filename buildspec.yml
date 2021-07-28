@@ -9,6 +9,7 @@ phases:
       # Upgrade AWS CLI to the latest version
       - pip install --upgrade awscli
       - pip install aws-sam-cli
+      - docker --version
 
   pre_build:
     commands:
