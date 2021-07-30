@@ -45,7 +45,8 @@ Resources:
       EventInvokeConfig:
         MaximumRetryAttempts: 0
       FunctionName: validation-server-engine
-      CodeUri: ./src/
+      PackageType: Image
+      ImageUri: ./src/
       Handler: index.handler
       Runtime: python3.8
       Timeout: 60
