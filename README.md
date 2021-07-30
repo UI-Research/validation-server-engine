@@ -2,6 +2,9 @@
 
 ### invoke
 
+```python
+```
+
 ```bash
 docker exec -it /bin/bash
 mysql --user=[username] --password
@@ -15,5 +18,3 @@ DELETE FROM v1_syntheticdataresult WHERE run_id=1;
 
 
 
-```
-```
