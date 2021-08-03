@@ -48,6 +48,7 @@ Resources:
       PackageType: Image
       ImageConfig:
           Command: ["index.handler"]
+      #ImageUri: ${AWS::AccountId}
       Timeout: 60
       MemorySize: 256
       Role:

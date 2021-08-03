@@ -22,6 +22,7 @@ phases:
       # Use AWS SAM to package the application by using AWS CloudFormation
       #- aws cloudformation package --template template.yml --s3-bucket $S3_BUCKET --output-template template-export.yml
       - sam build
+      - cat .aws-sam/build/template.yaml
       - sam package --s3-bucket $S3_BUCKET --output-template-file template-export.yml --image-repository ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine
 
       # Do not remove this statement. This command is required for AWS CodeStar projects.
