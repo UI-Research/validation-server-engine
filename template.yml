@@ -29,7 +29,7 @@ Globals:
     AutoPublishAlias: live
     DeploymentPreference:
       Enabled: true
-      Type: Canary10Percent5Minutes
+      Type: AllAtOnce
       Role: !Ref CodeDeployRole
     Tags:
       Center: !FindInMap [TagsMap, Tags, Center]
