@@ -1,0 +1,118 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+- AWS::Serverless-2016-10-31
+- AWS::CodeStar
+Parameters:
+  ProjectId:
+    Type: String
+    Description: CodeStar projectId used to associate new resources to team members
+  CodeDeployRole:
+    Type: String
+    Description: IAM role to allow AWS CodeDeploy to manage deployment of AWS Lambda
+      functions
+  Stage:
+    Type: String
+    Description: The name for a project pipeline stage, such as Staging or Prod, for
+      which resources are provisioned and deployed.
+    Default: ''
+Mappings:
+  TagsMap:
+    Tags:
+      Center: TECH
+      Team: DS
+      ProjectName: Prototype Validation Server Infrastructure
+      ProjectCode: 102213-0001-001-00001
+      Name: validation-server-backend
+Globals:
+  Function:
+    AutoPublishAlias: live
+    DeploymentPreference:
+      Enabled: true
+      Type: AllAtOnce
+      Role:
+        Ref: CodeDeployRole
+    Tags:
+      Center:
+        Fn::FindInMap:
+        - TagsMap
+        - Tags
+        - Center
+      Tech-Team:
+        Fn::FindInMap:
+        - TagsMap
+        - Tags
+        - Team
+      Project-Name:
+        Fn::FindInMap:
+        - TagsMap
+        - Tags
+        - ProjectName
+      Project-Code:
+        Fn::FindInMap:
+        - TagsMap
+        - Tags
+        - ProjectCode
+      Name:
+        Fn::FindInMap:
+        - TagsMap
+        - Tags
+        - Name
+Resources:
+  QueryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      EventInvokeConfig:
+        MaximumRetryAttempts: 0
+      FunctionName: validation-server-engine
+      PackageType: Image
+      ImageConfig:
+        Command:
+        - index.handler
+      ImageUri: 672001523455.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine:queryfunction-b7a901c27bb3-python3.8-v1
+      Timeout: 60
+      MemorySize: 256
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./src
+      DockerTag: python3.8-v1
+  LambdaExecutionRole:
+    Description: Creating service role in IAM for AWS Lambda
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: validation-server-engine-role
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName:
+          Fn::Sub: validation-server-engine-policy
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+            - s3:ListBucket
+            Resource:
+            - arn:aws:s3:::ui-validation-server
+          - Effect: Allow
+            Action:
+            - s3:*Object*
+            Resource:
+            - arn:aws:s3:::ui-validation-server/*
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource:
+            - arn:aws:logs:*:*:*
