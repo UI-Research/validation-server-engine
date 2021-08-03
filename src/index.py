@@ -195,5 +195,4 @@ def handler(event, context):
 
     # post to api
     response = post_payload(event, payload, credentials, confidential_query)
-    print(response.ok)
     print(response.status_code)
