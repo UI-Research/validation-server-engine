@@ -8,7 +8,8 @@ phases:
 
       # Upgrade AWS CLI to the latest version
       - pip install --upgrade awscli
-      - pip install aws-sam-cli
+      - sam --version
+      - pip install aws-sam-cli==1.25.0
 
   pre_build:
     commands:
@@ -22,8 +23,7 @@ phases:
       # Use AWS SAM to package the application by using AWS CloudFormation
       #- aws cloudformation package --template template.yml --s3-bucket $S3_BUCKET --output-template template-export.yml
       - sam build
-      - ls -la
-      - sam package --template .aws-sam/build/template.yaml --s3-bucket $S3_BUCKET --output-template-file template-export.yml --image-repository ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine
+      - sam package --s3-bucket $S3_BUCKET --output-template-file template-export.yml --image-repository ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine
 
       # Do not remove this statement. This command is required for AWS CodeStar projects.
       # Update the AWS Partition, AWS Region, account ID and project ID in the project ARN on template-configuration.json file so AWS CloudFormation can tag project resources.
