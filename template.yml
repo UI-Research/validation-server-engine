@@ -46,11 +46,15 @@ Resources:
         MaximumRetryAttempts: 0
       FunctionName: validation-server-engine
       PackageType: Image
-      ImageUri: ./src/
+      #ImageUri: ./src/
       Handler: index.handler
       Runtime: python3.8
       Timeout: 60
       MemorySize: 256
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./src
+      DockerTag: latest
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole

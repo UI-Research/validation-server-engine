@@ -121,8 +121,7 @@ def parse_payload(command_id, run_id, epsilon, data, accuracy):
 
     result = {
         "ok": True,
-        "data": data,
-        "accuracy": accuracy
+        "data": data
     }
 
     # generate api payload
@@ -130,7 +129,8 @@ def parse_payload(command_id, run_id, epsilon, data, accuracy):
         "command_id": command_id,
         "run_id": run_id,
         "privacy_budget_used": epsilon,
-        "result": json.dumps(result)
+        "result": json.dumps(result),
+        "accuracy": json.dumps(accuracy)
     }
 
     return payload
