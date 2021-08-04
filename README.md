@@ -24,9 +24,8 @@ payload = {
 payload = json.dumps(payload).encode()
 
 response = client.invoke(
-    FunctionName="awscodestar-validation-serv-lambda-QueryFunction",
-    InvocationType="Event",
-
+    FunctionName="validation-server-engine",
+    InvocationType="Event"
 )
 ```
 

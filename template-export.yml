@@ -68,13 +68,13 @@ Resources:
       ImageConfig:
         Command:
         - index.handler
-      ImageUri: 672001523455.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine:queryfunction-b7a901c27bb3-python3.8-v1
       Timeout: 60
       MemorySize: 256
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
         - Arn
+      ImageUri: 672001523455.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine:queryfunction-fd8c4386c16a-python3.8-v1
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./src
@@ -106,9 +106,16 @@ Resources:
             - arn:aws:s3:::ui-validation-server
           - Effect: Allow
             Action:
-            - s3:*Object*
+            - s3:GetObject
             Resource:
             - arn:aws:s3:::ui-validation-server/*
+          - Effect: Allow
+            Action:
+            - ecr:BatchGetImage
+            - ecr:GetDownloadUrlForLayer
+            Resource:
+            - arn:aws:ecr:::repository/validation-server-engine
+            - arn:aws:ecr:::repository/validation-server-engine/*
           - Effect: Allow
             Action:
             - logs:CreateLogGroup

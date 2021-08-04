@@ -67,14 +67,14 @@ def load_metadata(metadata = "puf_subset.yaml"):
     """
     Load base metadata file for SmartNoise reader.
     """
-    fs = s3fs.S3FileSystem()
-    yaml_path = f"s3://ui-validation-server/data/{metadata}"
-    
-    with fs.open(yaml_path, "rb") as stream:
-        meta_dict = yaml.safe_load(stream)
-    
+    client = boto3.client("s3")
+    response = client.get_object(
+        Bucket="ui-validation-server", 
+        Key=f"data/{metadata}"
+    )
+    data = response["Body"].read()
+    meta_dict = yaml.safe_load(data)
     meta = CollectionMetadata.from_dict(meta_dict)
-    
     return meta
 
 def get_reader(database, credentials):
