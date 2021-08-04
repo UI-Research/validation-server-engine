@@ -99,6 +99,11 @@ Resources:
                   - arn:aws:kms:::key/8910e308-71bf-4951-9cc3-193b515631c3
               - Effect: Allow
                 Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - "arn:aws:secretsmanager:::secret:validation-server-backend-UGy5Ro"
+              - Effect: Allow
+                Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
