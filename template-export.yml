@@ -118,6 +118,11 @@ Resources:
             - arn:aws:ecr:::repository/validation-server-engine/*
           - Effect: Allow
             Action:
+            - kms:Decrypt
+            Resource:
+            - arn:aws:kms:::key/8910e308-71bf-4951-9cc3-193b515631c3
+          - Effect: Allow
+            Action:
             - logs:CreateLogGroup
             - logs:CreateLogStream
             - logs:PutLogEvents

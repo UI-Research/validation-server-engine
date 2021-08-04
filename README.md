@@ -2,7 +2,16 @@
 
 ### deploy
 
-Run `sam package` locally as a workaround.
+Run `sam package` locally as a workaround since CodeBuild fails for no clear reason.
+
+```bash
+ACCOUNT_ID=$(aws sts get-caller-identity | jq ".Account" | sed 's/\"//g')
+S3_BUCKET=aws-codestar-us-east-1-672001523455-validation-serv-pipe
+sam build
+sam package --s3-bucket $S3_BUCKET --output-template-file template-export.yml --image-repository ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine
+```
+
+Then commit the new template-export up to GitHub
 
 ### invoke
 
