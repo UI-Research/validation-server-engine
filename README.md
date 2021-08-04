@@ -2,6 +2,8 @@
 
 ### deploy
 
+Run `sam package` locally as a workaround.
+
 ### invoke
 
 ```python
