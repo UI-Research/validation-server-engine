@@ -184,7 +184,6 @@ def post_payload(event, payload, credentials, confidential_query):
 def handler(event, context):
     
     # setup
-    print(event)
     metadata = load_metadata()
     credentials = get_secret(secret_name = "validation-server-backend")
     reader = get_reader("puf", credentials)
@@ -192,9 +191,8 @@ def handler(event, context):
     
     # run analysis query
     payload = run_analysis_query(reader, metadata, event)
-    print(payload)
 
     # post to api
     response = post_payload(event, payload, credentials, confidential_query)
-    #print(response.ok)
+    print(response.ok)
     print(response.status_code)
