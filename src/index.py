@@ -184,6 +184,7 @@ def post_payload(event, payload, credentials, confidential_query):
 def handler(event, context):
     
     # setup
+    print(event)
     metadata = load_metadata()
     credentials = get_secret(secret_name = "validation-server-backend")
     reader = get_reader("puf", credentials)
