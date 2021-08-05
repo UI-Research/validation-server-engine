@@ -125,7 +125,7 @@ Resources:
             Action:
             - secretsmanager:GetSecretValue
             Resource:
-            - arn:aws:secretsmanager:::secret:validation-server-backend-UGy5Ro
+            - Fn::Sub: arn:aws:secretsmanager:us-east-1:672001523455:secret:validation-server-backend-UGy5Ro
           - Effect: Allow
             Action:
             - logs:CreateLogGroup
