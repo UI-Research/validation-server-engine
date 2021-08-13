@@ -4,6 +4,6 @@
     "confidential_query": false,
     "epsilon": 1.00,
     "transformation_query": null,
-    "analysis_query": "SELECT MARS, COUNT(E00200) as n FROM puf.puf GROUP BY MARS",
+    "analysis_query": "SELECT MARS, COUNT(fake) as n FROM puf.puf GROUP BY MARS",
     "debug": true
 }

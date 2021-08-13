@@ -27,15 +27,13 @@ payload = {
     "confidential_query": False,
     "epsilon": 1.00,
     "transformation_query": None,
-    "analysis_query": "SELECT MARS, COUNT(E00200) as n FROM puf.puf GROUP BY MARS"
+    "analysis_query": "SELECT MARS, COUNT(E00200) as n FROM puf.puf GROUP BY MARS",
+    "debug": True
 }
 
 payload = json.dumps(payload).encode()
 
-response = client.invoke(
-    FunctionName="validation-server-engine",
-    InvocationType="Event"
-)
+response = client.invoke(FunctionName="validation-server-engine", InvocationType="Event", Payload=payload)
 ```
 
 ```bash

@@ -181,18 +181,49 @@ def post_payload(event, payload, credentials, confidential_query):
 
     return response
 
-def handler(event, context):
-    
-    # setup
-    metadata = load_metadata()
-    credentials = get_secret(secret_name = "validation-server-backend")
-    reader = get_reader("puf", credentials)
-    confidential_query = event["confidential_query"]
-    
-    # run analysis query
-    payload = run_analysis_query(reader, metadata, event)
+def parse_error(event, e):
 
-    # post to api
-    response = post_payload(event, payload, credentials, confidential_query)
-    print(response.ok)
-    print(response.status_code)
+    # pull event parameters
+    analysis_query = event["analysis_query"]
+    command_id = event["command_id"]
+    run_id = event["run_id"]
+    epsilon = float(event["epsilon"])
+
+    result = {
+        "ok": False,
+        "error": str(e)
+    }
+
+    accuracy = {}
+
+    # generate api payload
+    payload = {
+        "command_id": command_id,
+        "run_id": run_id,
+        "privacy_budget_used": epsilon,
+        "result": json.dumps(result),
+        "accuracy": json.dumps(accuracy)
+    }
+
+    return payload
+
+def handler(event, context):
+    print(event)
+    try:
+        # setup
+        metadata = load_metadata()
+        credentials = get_secret(secret_name = "validation-server-backend")
+        reader = get_reader("puf", credentials)
+        confidential_query = event["confidential_query"]
+        debug = event["debug"]
+        # run analysis query
+        payload = run_analysis_query(reader, metadata, event)
+    except Exception as e:
+        payload = parse_error(event, e)
+    finally:
+        # post to api
+        if not debug:
+            response = post_payload(event, payload, credentials, confidential_query)
+            print(response.status_code)
+            print(response.reason)
+    print(payload)
