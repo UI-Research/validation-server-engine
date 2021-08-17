@@ -74,7 +74,7 @@ Resources:
         Fn::GetAtt:
         - LambdaExecutionRole
         - Arn
-      ImageUri: 672001523455.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine:queryfunction-aef2c504298e-python3.8-v1
+      ImageUri: 672001523455.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine:queryfunction-089cd550cdaa-python3.8-v1
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./src

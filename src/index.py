@@ -63,7 +63,7 @@ def get_secret(secret_name = "validation-server-backend"):
             secret = base64.b64decode(get_secret_value_response['SecretBinary'])
         return json.loads(secret)
 
-def load_metadata(metadata = "puf_subset.yaml"):
+def load_metadata(metadata = "puf.json"):
     """
     Load base metadata file for SmartNoise reader.
     """
@@ -73,7 +73,7 @@ def load_metadata(metadata = "puf_subset.yaml"):
         Key=f"data/{metadata}"
     )
     data = response["Body"].read()
-    meta_dict = yaml.safe_load(data)
+    meta_dict = json.loads(data)
     meta = CollectionMetadata.from_dict(meta_dict)
     return meta
 

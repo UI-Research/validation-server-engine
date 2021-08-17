@@ -11,7 +11,7 @@ sam build
 sam package --s3-bucket $S3_BUCKET --output-template-file template-export.yml --image-repository ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine
 ```
 
-Then commit the new template-export up to GitHub
+Then commit the new template-export up to GitHub.
 
 ### invoke
 
@@ -27,7 +27,7 @@ payload = {
     "confidential_query": False,
     "epsilon": 1.00,
     "transformation_query": None,
-    "analysis_query": "SELECT MARS, COUNT(E00200) as n FROM puf.puf GROUP BY MARS",
+    "analysis_query": "SELECT MARS, COUNT(fake) as n FROM puf.puf GROUP BY MARS",
     "debug": True
 }
 
