@@ -103,7 +103,7 @@ def get_epsilon_per_column(reader, metadata, query, epsilon):
     return epsilon_per_column
 
 
-def parse_payload(command_id, run_id, epsilon, data, accuracy):
+def parse_payload(command_id, run_id, resarcher_id, epsilon, data, accuracy):
 
     # hard-code quantiles
     quantiles = [0.10, 0.50, 0.90]
@@ -128,6 +128,7 @@ def parse_payload(command_id, run_id, epsilon, data, accuracy):
     payload = {
         "command_id": command_id,
         "run_id": run_id,
+        "researcher_id": resarcher_id,
         "privacy_budget_used": epsilon,
         "result": json.dumps(result),
         "accuracy": json.dumps(accuracy)
@@ -147,6 +148,7 @@ def run_analysis_query(reader, metadata, event):
     analysis_query = event["analysis_query"]
     command_id = event["command_id"]
     run_id = event["run_id"]
+    researcher_id = event["researcher_id"]
     epsilon = float(event["epsilon"])
 
     # generate epsilon based on query complexity
@@ -158,7 +160,7 @@ def run_analysis_query(reader, metadata, event):
 
     # run query and format results
     data, accuracy = private_reader.execute_with_accuracy_df(analysis_query)
-    payload = parse_payload(command_id, run_id, epsilon, data, accuracy)
+    payload = parse_payload(command_id, run_id, researcher_id, epsilon, data, accuracy)
 
     return payload
 
@@ -187,6 +189,7 @@ def parse_error(event, e):
     analysis_query = event["analysis_query"]
     command_id = event["command_id"]
     run_id = event["run_id"]
+    researcher_id = event["researcher_id"]
     epsilon = float(event["epsilon"])
 
     result = {
@@ -200,6 +203,7 @@ def parse_error(event, e):
     payload = {
         "command_id": command_id,
         "run_id": run_id,
+        "researcher_id": researcher_id,
         "privacy_budget_used": epsilon,
         "result": json.dumps(result),
         "accuracy": json.dumps(accuracy)
