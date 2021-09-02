@@ -1,0 +1,10 @@
+{
+    "command_id": 2,
+    "run_id": 1,
+    "researcher_id": 1,
+    "confidential_query": true,
+    "epsilon": 1.00,
+    "transformation_query": "CREATE TABLE puf.puf_kueyama AS SELECT recid, mars, SQRT(e00200) as e00200, CASE WHEN (e00200 > 10000) THEN (0) WHEN (e00200 <= 10000) THEN (1) END AS indicator FROM puf.puf",
+    "analysis_query": "SELECT indicator, AVG(e00200) as e00200 FROM puf.puf_kueyama GROUP BY indicator",
+    "debug": true
+}

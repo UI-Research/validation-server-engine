@@ -48,7 +48,7 @@ Resources:
       PackageType: Image
       ImageConfig:
           Command: ["index.handler"]
-      Timeout: 60
+      Timeout: 300
       MemorySize: 256
       Role:
         Fn::GetAtt:

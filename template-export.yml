@@ -68,13 +68,13 @@ Resources:
       ImageConfig:
         Command:
         - index.handler
-      Timeout: 60
+      Timeout: 300
       MemorySize: 256
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
         - Arn
-      ImageUri: 672001523455.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine:queryfunction-db6a03ecabd6-python3.8-v1
+      ImageUri: 672001523455.dkr.ecr.us-east-1.amazonaws.com/validation-server-engine:queryfunction-3fe62b273d28-python3.8-v1
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./src

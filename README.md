@@ -1,5 +1,10 @@
 # validation-server-backend
 
+**@staylorUI** If you end up refactoring the endpoints to not need 
+`researcher_id` in the request, remove the references to `researcher_id` 
+in `src/index.py`. Update the Lambda function following the instructions 
+in `deploy` below.
+
 ### deploy
 
 Run `sam package` locally as a workaround since CodeBuild fails for no clear reason.
@@ -12,6 +17,15 @@ sam package --s3-bucket $S3_BUCKET --output-template-file template-export.yml --
 ```
 
 Then commit the new template-export up to GitHub.
+
+### local invoke
+
+Build and test locally
+
+```bash
+sam build
+sam local invoke QueryFunction --event src/event.json
+```
 
 ### invoke
 

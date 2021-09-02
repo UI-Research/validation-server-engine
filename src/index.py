@@ -3,6 +3,8 @@ import boto3
 import json
 import numpy as np
 import pandas as pd
+import psycopg2
+import re
 import requests
 import s3fs
 import yaml
@@ -81,7 +83,6 @@ def get_reader(database, credentials):
     """
     Create a SmartNoise reader to the postgres database.
     """
-    
     reader = PostgresReader(
         host = credentials["host"],
         database = database,
@@ -104,7 +105,7 @@ def get_epsilon_per_column(reader, metadata, query, epsilon):
 
 
 def parse_payload(command_id, run_id, resarcher_id, epsilon, data, accuracy):
-
+    """Parse query results to payload for POST request."""
     # hard-code quantiles
     quantiles = [0.10, 0.50, 0.90]
     
@@ -136,6 +137,114 @@ def parse_payload(command_id, run_id, resarcher_id, epsilon, data, accuracy):
 
     return payload
 
+def get_table_name(query):
+    """Parse the table name from a query."""
+    table = re.search(r"puf\.puf_\S+", query).group(0)
+    return table
+
+def get_postgres_connector(credentials):
+    """Connect to the postgres database"""
+     # connect to database
+    connection = psycopg2.connect(
+    host = credentials["host"],
+    dbname = "puf",
+    user = credentials["username"],
+    password = credentials["password"],
+    port = credentials["port"]
+    )
+    return connection
+
+def run_transformation_query(transformation_query, credentials):
+    """Run a transformation query on the postgreSQL database."""
+    # parse table name from statement
+    table = get_table_name(transformation_query)
+
+    # drop any old reference tables
+    drop_statement = f"DROP TABLE IF EXISTS {table}"
+
+    # connect to database
+    connection = get_postgres_connector(credentials)
+
+    with connection.cursor() as cursor:
+        cursor.execute(drop_statement)
+        cursor.execute(transformation_query)
+    
+    # close out connection
+    connection.commit()
+    connection.close()
+
+def generate_transformation_metadata(analysis_query, credentials):
+    """Get necessary metadata from a transformation for SmartNoise."""
+    cardinality_cutoff = 100 # cutoff for "categorical" variable levels
+    # parse table name from statement
+    schema = get_table_name(analysis_query)
+    table = schema.replace("puf.", "")
+    
+    # connect to database
+    connection = get_postgres_connector(credentials)
+
+    # get column names and types
+    information_query = f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{table}';"
+    
+    with connection.cursor() as cursor:
+        cursor.execute(information_query)
+        cols = cursor.fetchall()
+
+    # start metadata
+    puf = {}
+    for col in cols:
+        key = col[0]
+        key_type = col[1]
+        if key_type in ["smallint", "integer", "bigint"]:
+            key_type = "int"
+        elif key_type in ["decimal", "numeric", "real", "double precision"]:
+            key_type = "float"
+        elif key_type in ["boolean"]:
+            key_type = "boolean"
+        else:
+            key = "string"
+        puf[key] = {}
+        puf[key]["type"] = key_type
+    
+    # get min/max/unique
+    for key in puf.keys():
+        metadata_query = f"""
+        SELECT 
+            min({key}) as min,
+            max({key}) as max,
+            count(distinct({key})) as ndistinct,
+            count({key}) as count
+        FROM puf.{table}
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(metadata_query)
+            min, max, nunique, count = cursor.fetchall()[0]
+            puf[key]["lower"] = min
+            puf[key]["upper"] = max
+            if nunique < cardinality_cutoff: 
+                puf[key]["cardinality"] = nunique
+
+    # catch recid
+    puf["recid"] = {
+        "type": "int",
+        "private_id": True
+    }
+
+    # catch weird formatting
+    puf["censor_dims"] = False
+    puf["rows"] = count
+
+    # generate full smartnoise metadata
+    metadata = {
+        "Database" : {
+            "puf" : {
+                f"{table}" : puf
+            }
+        }
+    }
+
+    return metadata
+
 def run_analysis_query(reader, metadata, event):
     """
     Run an analysis query on the synthetic database table.
@@ -165,7 +274,7 @@ def run_analysis_query(reader, metadata, event):
     return payload
 
 def post_payload(event, payload, credentials, confidential_query):
-    
+    """Post results payload to API."""
     # set url
     url_stub = "https://validation-server-stg.urban.org/api/v1"
     
@@ -184,7 +293,7 @@ def post_payload(event, payload, credentials, confidential_query):
     return response
 
 def parse_error(event, e):
-
+    """Generate payload when exception occurs."""
     # pull event parameters
     analysis_query = event["analysis_query"]
     command_id = event["command_id"]
@@ -212,6 +321,7 @@ def parse_error(event, e):
     return payload
 
 def handler(event, context):
+    """Main lambda function."""
     print(event)
     try:
         # setup
@@ -219,7 +329,14 @@ def handler(event, context):
         credentials = get_secret(secret_name = "validation-server-backend")
         reader = get_reader("puf", credentials)
         confidential_query = event["confidential_query"]
+        transformation_query = event["transformation_query"]
         debug = event["debug"]
+        # run transformation query
+        if transformation_query is not None and not confidential_query:
+            run_transformation_query(transformation_query, credentials)
+        # regenerate metadata if necessary
+        if transformation_query is not None:
+            metadata = generate_transformation_metadata(transformation_query, credentials)
         # run analysis query
         payload = run_analysis_query(reader, metadata, event)
     except Exception as e:
