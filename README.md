@@ -1,9 +1,5 @@
 # validation-server-backend
-
-**@staylorUI** If you end up refactoring the endpoints to not need 
-`researcher_id` in the request, remove the references to `researcher_id` 
-in `src/index.py`. Update the Lambda function following the instructions 
-in `deploy` below.
+AWS Lambda function for the validation server back-end. The  lambda function accepts an event payload that includes the transformation query (if supplied), analysis query, and the epsilon level at which to run the analysis query.
 
 ### deploy
 
