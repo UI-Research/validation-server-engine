@@ -1,5 +1,5 @@
 # validation-server-backend
-AWS Lambda function for the validation server back-end. The  lambda function accepts an event payload that includes the transformation query (if supplied), analysis query, and the epsilon level at which to run the analysis query.
+AWS Lambda function for the validation server back-end. The  lambda function accepts an event payload that includes the transformation query, analysis query, and the epsilon level at which to run the analysis query.
 
 ### deploy
 
