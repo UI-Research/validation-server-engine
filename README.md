@@ -1,6 +1,8 @@
 # validation-server-backend
 AWS Lambda function for the validation server back-end. The  lambda function accepts an event payload that includes the transformation query, analysis query, and the epsilon level at which to run the analysis query.
 
+[Validation Server Whitepaper](https://www.urban.org/research/publication/privacy-preserving-validation-server-prototype)
+
 ### deploy
 
 Run `sam package` locally as a workaround since CodeBuild fails for no clear reason.
