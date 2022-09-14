@@ -21,7 +21,7 @@ Mappings:
       Center: TECH
       Team: DS
       ProjectName: Prototype Validation Server Infrastructure
-      ProjectCode: 102213-0001-001-00001
+      ProjectCode: 102213-0001-001-00003
       Name: validation-server-backend
 Globals:
   Function:
